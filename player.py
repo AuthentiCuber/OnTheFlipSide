@@ -1,5 +1,4 @@
 import pygame
-from pygame.locals import *
 from math import exp
 
 
@@ -22,10 +21,10 @@ class Player:
     def update(self, dt: float):
         keys = pygame.key.get_pressed()
 
-        up = keys[K_UP] or keys[K_w]
-        down = keys[K_DOWN] or keys[K_s]
-        left = keys[K_LEFT] or keys[K_a]
-        right = keys[K_RIGHT] or keys[K_d]
+        up = keys[pygame.K_UP] or keys[pygame.K_w]
+        down = keys[pygame.K_DOWN] or keys[pygame.K_s]
+        left = keys[pygame.K_LEFT] or keys[pygame.K_a]
+        right = keys[pygame.K_RIGHT] or keys[pygame.K_d]
 
         if up:
             self.gravity.update(0, -1)
