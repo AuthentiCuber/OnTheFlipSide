@@ -10,6 +10,7 @@ from levels import loadlevel
 def get_relative_file(path: str) -> str:
     return str(Path(__file__).parent.resolve()) + path
 
+
 class Game:
     def __init__(self) -> None:
         self.settings = Settings()
@@ -22,7 +23,7 @@ class Game:
 
         self.player = Player()
         self.tiles = loadlevel(get_relative_file(
-            "/level.txt"), 100)
+            "/level.txt"), 120)
 
     def level1(self, dt: float) -> None:
         for event in pygame.event.get():

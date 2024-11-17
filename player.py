@@ -15,9 +15,9 @@ class Player:
         self.gravity = pygame.Vector2(0, 1)
         self.gravity_strength = 3000
         self.friction = 4
-        self.image = pygame.Surface((50, 50))
+        self.image = pygame.Surface((60, 60))
         self.image.fill("dodgerblue4")
-        self.rect = self.image.get_frect(topleft=(200, 200))
+        self.rect = self.image.get_frect(topleft=(240, 120))
 
     def update(self, dt: float):
         keys = pygame.key.get_pressed()

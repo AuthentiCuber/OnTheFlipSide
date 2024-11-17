@@ -29,8 +29,8 @@ all_tiles.insert(0, Tile)
 def loadlevel(path: str, tile_size: float) -> pygame.sprite.Group:
     with open(path, "r") as file:
         tiles = pygame.sprite.Group()
-        x = -50
-        y = -50
+        x = 0
+        y = 0
         for line in file.readlines():
             for character in line.strip():
                 if character.isnumeric():
@@ -41,5 +41,5 @@ def loadlevel(path: str, tile_size: float) -> pygame.sprite.Group:
 
                 x += tile_size
             y += tile_size
-            x = -50
+            x = 0
         return tiles
