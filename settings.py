@@ -74,7 +74,7 @@ class Settings:
         return self._max_fps
 
     @max_fps.setter
-    def max_fps(self, value: int | None):
+    def max_fps(self, value: int | None) -> None:
         if value == None:
             self._max_fps = pygame.display.get_desktop_refresh_rates()[
                 self._monitor]

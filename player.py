@@ -7,7 +7,7 @@ def expDecay(decay: float, dt: float) -> float:
 
 
 class Player:
-    def __init__(self):
+    def __init__(self) -> None:
         self.movement = pygame.Vector2()
         self.vel = pygame.Vector2()
         self.max_vel = 1000
@@ -18,7 +18,7 @@ class Player:
         self.image.fill("dodgerblue4")
         self.rect = self.image.get_frect(topleft=(240, 120))
 
-    def update(self, dt: float):
+    def update(self, dt: float) -> None:
         keys = pygame.key.get_pressed()
 
         up = keys[pygame.K_UP] or keys[pygame.K_w]
@@ -47,14 +47,14 @@ class Player:
 
         self.movement.update(self.vel * dt)
 
-    def move(self):
+    def move(self) -> None:
         self.rect.x += self.movement.x
         self.rect.y += self.movement.y
 
-    def draw(self, surface: pygame.Surface):
+    def draw(self, surface: pygame.Surface) -> None:
         surface.blit(self.image, self.rect)
 
-    def collide(self, group: pygame.sprite.Group):
+    def collide(self, group: pygame.sprite.Group) -> None:
         for sprite in group:
             # collide x
             if sprite.rect.colliderect(self.rect.x + self.movement.x, self.rect.y, self.rect.width, self.rect.height):
