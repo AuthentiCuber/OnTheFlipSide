@@ -28,11 +28,7 @@ class LavaTile(Tile):
         super().__init__(x, y, size, (200, 50, 50))
 
 
-tiles = (WallTile, LavaTile)
+tiles = tuple(Tile.__subclasses__())
 
 if __name__ == "__main__":
-    level: set[Tile] = set()
-    level.add(WallTile(0, 0, 50))
-    level.add(LavaTile(50, 50, 50))
-    level.add(WallTile(0, 0, 50))
-    print(level)
+    print(tiles == (WallTile, LavaTile))

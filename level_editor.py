@@ -46,6 +46,7 @@ class Game:
     def draw_tiles(self) -> None:
         for pos, tile_type in self.level.items():
             tiles.tiles[tile_type](
+                # type: ignore
                 pos[0], pos[1], self.grid_cell_size).draw(self.screen)
 
     def handle_place(self) -> None:
