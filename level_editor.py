@@ -14,7 +14,7 @@ class Game:
         self.grid_cell_size = 70
         self.grid_dimensions = (16, 9)
 
-        self.level: set[tiles.Tile] = set()
+        self.level: dict[tuple[float, float], tiles.Tile] = {}
         self.current_tile_type = 0
 
     def scene(self, dt: float) -> None:
@@ -37,7 +37,7 @@ class Game:
                              (self.grid_cell_size * (self.grid_dimensions[0] - 1), y*self.grid_cell_size))
 
     def draw_tiles(self) -> None:
-        for tile in self.level:
+        for tile in self.level.values():
             tile.draw(self.screen)
 
     def handle_place(self) -> None:
@@ -48,12 +48,21 @@ class Game:
             self.current_tile_type = 1
 
         mouse_pos = pygame.mouse.get_pos()
-        mouse_button = pygame.mouse.get_pressed()[0]
-        if mouse_button:
-            cell_x = mouse_pos[0] // self.grid_cell_size
-            cell_y = mouse_pos[1] // self.grid_cell_size
-            self.level.add(tiles.tiles[self.current_tile_type](
-                cell_x * self.grid_cell_size, cell_y * self.grid_cell_size, self.grid_cell_size))
+        mouse_buttons = pygame.mouse.get_pressed()
+        lmb = mouse_buttons[0]
+        rmb = mouse_buttons[2]
+        if not (lmb or rmb):
+            return
+        cell_x = mouse_pos[0] // self.grid_cell_size
+        cell_y = mouse_pos[1] // self.grid_cell_size
+        actual_x = cell_x * self.grid_cell_size
+        actual_y = cell_y * self.grid_cell_size
+        if lmb:
+            self.level[(actual_x, actual_y)] = tiles.tiles[self.current_tile_type](
+                actual_x, actual_y, self.grid_cell_size)
+        elif rmb:
+            if (actual_x, actual_y) in self.level.keys():
+                del self.level[(actual_x, actual_y)]
 
     def loop(self) -> None:
         self.dt = self.clock.tick_busy_loop(self.settings.max_fps) / 1000
