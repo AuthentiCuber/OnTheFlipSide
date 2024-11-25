@@ -1,14 +1,7 @@
 import pygame
 from settings import Settings
-
-from pathlib import Path
-
 from player import Player
-from levels import loadlevel
-
-
-def get_relative_file(path: str) -> str:
-    return str(Path(__file__).parent.resolve()) + path
+import tiles
 
 
 class Game:
@@ -16,18 +9,19 @@ class Game:
         self.settings = Settings()
         self.screen = self.settings.screen
         self.subscreen = pygame.Surface((1920, 1080))
-        self.dt = 0
+        self.dt: float = 0
         self.clock = pygame.Clock()
         self.running = True
         self.scene = self.level1
 
         self.player = Player()
-        self.tiles = loadlevel(get_relative_file(
-            "/level.txt"), 120)
+        self.tiles = tiles.load_level()
 
     def level1(self, dt: float) -> None:
         for event in pygame.event.get():
-            if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
+            if event.type == pygame.QUIT or (
+                event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE
+            ):
                 self.running = False
                 return
 
@@ -45,8 +39,7 @@ class Game:
 
         self.scene(self.dt)
 
-        pygame.transform.scale(
-            self.subscreen, self.settings.resolution, self.screen)
+        pygame.transform.scale(self.subscreen, self.settings.resolution, self.screen)
         pygame.display.flip()
 
 
