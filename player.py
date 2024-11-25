@@ -1,5 +1,6 @@
 import pygame
 from math import exp
+from typing import Any
 
 
 def expDecay(decay: float, dt: float) -> float:
@@ -54,17 +55,28 @@ class Player:
     def draw(self, surface: pygame.Surface) -> None:
         surface.blit(self.image, self.rect)
 
-    def collide(self, group: pygame.sprite.Group) -> None:
+    # https://github.com/pygame-community/pygame-ce/pull/3053
+    def collide(self, group: "pygame.sprite.Group[Any]") -> None:
         for sprite in group:
             # collide x
-            if sprite.rect.colliderect(self.rect.x + self.movement.x, self.rect.y, self.rect.width, self.rect.height):
+            if sprite.rect.colliderect(
+                self.rect.x + self.movement.x,
+                self.rect.y,
+                self.rect.width,
+                self.rect.height,
+            ):
                 if self.movement.x > 0:
                     self.movement.x = sprite.rect.left - self.rect.right
                 elif self.movement.x < 0:
                     self.movement.x = sprite.rect.right - self.rect.left
                 self.vel.x = 0
             # collide y
-            if sprite.rect.colliderect(self.rect.x, self.rect.y + self.movement.y, self.rect.width, self.rect.height):
+            if sprite.rect.colliderect(
+                self.rect.x,
+                self.rect.y + self.movement.y,
+                self.rect.width,
+                self.rect.height,
+            ):
                 if self.movement.y < 0:
                     self.movement.y = sprite.rect.bottom - self.rect.top
                 elif self.movement.y > 0:
