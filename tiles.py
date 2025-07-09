@@ -1,14 +1,18 @@
+import pickle
+from typing import Any, Callable, ParamSpec
+
 import pygame
 from pygame.typing import ColorLike
-import pickle
-from typing import Any, TypeVar, ParamSpec, Callable
 
 
 class Tile(pygame.sprite.Sprite):
-    def __init__(self, x: float, y: float, size: float, colour: ColorLike) -> None:
+    def __init__(
+        self, x: float, y: float, size: float, colour: ColorLike
+    ) -> None:
         super().__init__()
         self.pos = pygame.Vector2(x, y)
         self.size = size
+        self.collideable = True
         self.image = pygame.Surface((self.size, self.size))
         self.image.fill(colour)
         self.rect = self.image.get_frect(topleft=self.pos)
@@ -24,31 +28,39 @@ class LavaTile(Tile):
         super().__init__(x, y, size, (200, 50, 50))
 
 
-TileType = TypeVar("TileType", bound=Tile)
+class StartPos(Tile):
+    def __init__(self, x: float, y: float, size: float) -> None:
+        super().__init__(x, y, size, (200, 200, 200))
+        self.collideable = False
+
+
 tiles = tuple(Tile.__subclasses__())
+
 
 P = ParamSpec("P")
 
 
 def create_tile(
-    tile_type: Callable[P, TileType], *args: P.args, **kwargs: P.kwargs
-) -> TileType:
+    tile_type: Callable[P, Tile], *args: P.args, **kwargs: P.kwargs
+) -> Tile:
     return tile_type(*args, **kwargs)
 
 
 def level_data_to_tiles(
-    level_data: list[dict[str, Any]]
-) -> "pygame.sprite.Group[Tile]": # https://github.com/pygame-community/pygame-ce/pull/3053
+    level_data: list[dict[str, Any]],
+) -> pygame.sprite.Group[Tile]:
     return pygame.sprite.Group(
         [
-            create_tile(tiles[tile["type"]], tile["pos"].x, tile["pos"].y, tile["size"])
+            create_tile(
+                tiles[tile["type"]], tile["pos"].x, tile["pos"].y, tile["size"]
+            )
             for tile in level_data
         ]
     )
 
 
 def tiles_to_level_data(
-    tile_list: "pygame.sprite.Group[Tile]",
+    tile_list: pygame.sprite.Group[Tile],
 ) -> list[dict[str, Any]]:
     level_data = []
     for tile in tile_list.sprites():
@@ -62,12 +74,12 @@ def tiles_to_level_data(
     return level_data
 
 
-def save_level(tile_list: "pygame.sprite.Group[Tile]") -> None:
+def save_level(tile_list: pygame.sprite.Group[Tile]) -> None:
     with open("level", "wb") as file:
         pickle.dump(tiles_to_level_data(tile_list), file)
 
 
-def load_level() -> "pygame.sprite.Group[Tile]":
+def load_level() -> pygame.sprite.Group[Tile]:
     with open("level", "rb") as file:
         return level_data_to_tiles(pickle.load(file))
 

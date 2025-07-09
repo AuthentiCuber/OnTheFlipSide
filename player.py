@@ -1,6 +1,9 @@
-import pygame
 from math import exp
-from typing import Any
+from typing import cast
+
+import pygame
+
+from tiles import Tile
 
 
 def expDecay(decay: float, dt: float) -> float:
@@ -55,9 +58,14 @@ class Player:
     def draw(self, surface: pygame.Surface) -> None:
         surface.blit(self.image, self.rect)
 
-    # https://github.com/pygame-community/pygame-ce/pull/3053
-    def collide(self, group: "pygame.sprite.Group[Any]") -> None:
+    def collide(self, group: pygame.sprite.Group[Tile]) -> None:
         for sprite in group:
+            # because pygame.sprite.Sprite.rect is Optional for some reason
+            sprite.rect = cast(pygame.FRect, sprite.rect)
+
+            if not sprite.collideable:
+                continue
+
             # collide x
             if sprite.rect.colliderect(
                 self.rect.x + self.movement.x,
