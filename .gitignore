@@ -1,3 +1,6 @@
 /__pycache__
 .mypy_cache/
-mypy.ini
+.ruff_cache/
+.venv
+
+.vscode
