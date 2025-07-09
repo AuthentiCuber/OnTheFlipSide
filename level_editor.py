@@ -1,21 +1,22 @@
 import pygame
-from settings import Settings
+
 import tiles
+from settings import Settings
 
 
 class Game:
     def __init__(self) -> None:
         self.settings = Settings(max_fps=240)
         self.screen = self.settings.screen
+        self.subscreen = pygame.Surface((1920, 1080))
         self.clock = pygame.Clock()
         self.dt: float = 0
         self.running = True
 
-        self.grid_cell_size = 70
-        self.grid_dimensions = (16, 9)
+        self.grid_cell_size = 120
+        self.grid_dimensions = (17, 10)
 
-        # https://github.com/pygame-community/pygame-ce/pull/3053
-        self.level: "pygame.sprite.Group[tiles.Tile]" = pygame.sprite.Group()
+        self.level: pygame.sprite.Group[tiles.Tile] = pygame.sprite.Group()
         self.current_tile_type: type[tiles.Tile] = tiles.WallTile
 
     def scene(self, dt: float) -> None:
@@ -31,7 +32,7 @@ class Game:
                 elif event.key == pygame.K_F2:
                     self.level = tiles.load_level()
 
-        self.screen.fill((10, 200, 80))
+        self.subscreen.fill((10, 200, 80))
         self.draw_grid()
         self.handle_place()
         self.draw_tiles()
@@ -39,7 +40,7 @@ class Game:
     def draw_grid(self) -> None:
         for x in range(self.grid_dimensions[0]):
             pygame.draw.line(
-                self.screen,
+                self.subscreen,
                 "black",
                 (x * self.grid_cell_size, 0),
                 (
@@ -49,7 +50,7 @@ class Game:
             )
         for y in range(self.grid_dimensions[1]):
             pygame.draw.line(
-                self.screen,
+                self.subscreen,
                 "black",
                 (0, y * self.grid_cell_size),
                 (
@@ -59,7 +60,7 @@ class Game:
             )
 
     def draw_tiles(self) -> None:
-        self.level.draw(self.screen)
+        self.level.draw(self.subscreen)
 
     def handle_place(self) -> None:
         keys = pygame.key.get_pressed()
@@ -73,23 +74,23 @@ class Game:
         rmb = mouse_buttons[2]
         if not (lmb or rmb):
             return
-        mouse_pos = pygame.mouse.get_pos()
-        cell_x = mouse_pos[0] // self.grid_cell_size
-        cell_y = mouse_pos[1] // self.grid_cell_size
+        # position within subscreen
+        mouse_pos = pygame.Vector2(pygame.mouse.get_pos()).elementwise() * (
+            pygame.Vector2(self.subscreen.get_size()).elementwise()
+            / pygame.Vector2(self.screen.get_size())
+        )
+        cell_x = mouse_pos.x // self.grid_cell_size
+        cell_y = mouse_pos.y // self.grid_cell_size
         actual_x = cell_x * self.grid_cell_size
         actual_y = cell_y * self.grid_cell_size
+
+        tile = tiles.create_tile(
+            self.current_tile_type, actual_x, actual_y, self.grid_cell_size
+        )
         if lmb:
-            self.level.add(
-                tiles.create_tile(
-                    self.current_tile_type, actual_x, actual_y, self.grid_cell_size
-                )
-            )
+            self.level.add(tile)
         elif rmb:
-            if (
-                tile := tiles.create_tile(
-                    self.current_tile_type, actual_x, actual_y, self.grid_cell_size
-                )
-            ) in self.level:
+            if tile in self.level:
                 self.level.remove(tile)
 
     def loop(self) -> None:
@@ -97,6 +98,9 @@ class Game:
 
         self.scene(self.dt)
 
+        pygame.transform.scale(
+            self.subscreen, self.settings.resolution, self.screen
+        )
         pygame.display.flip()
 
 
