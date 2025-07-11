@@ -61,9 +61,13 @@ class Level1:
         return ReturnCode.CONTINUE
 
     def reset(self) -> None:
-        startpos = [
+        startpos_tiles = [
             tile for tile in self.tiles if isinstance(tile, tiles.StartPos)
-        ][0]
+        ]
+
+        if len(startpos_tiles) != 1:
+            raise RuntimeError("There must only be one startpos in level1")
+        startpos = startpos_tiles[0]
 
         half_grid_size = startpos.size // 2
         self.player.rect.center = (
@@ -71,6 +75,7 @@ class Level1:
             startpos.pos.y + half_grid_size,
         )
         self.player.gravity.update(0, 1)
+        self.player.vel = pygame.Vector2(0, 0)
 
 
 if __name__ == "__main__":
