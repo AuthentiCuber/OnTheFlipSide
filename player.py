@@ -1,3 +1,4 @@
+from enum import Enum, auto
 from math import exp
 from typing import cast
 
@@ -8,6 +9,12 @@ import tiles
 
 def expDecay(decay: float, dt: float) -> float:
     return exp(-decay * dt)
+
+
+class Collision(Enum):
+    DAMAGE = auto()
+    NORMAL = auto()
+    NONE = auto()
 
 
 class Player:
@@ -58,35 +65,42 @@ class Player:
     def draw(self, surface: pygame.Surface) -> None:
         surface.blit(self.image, self.rect)
 
-    def collide(self, group: pygame.sprite.Group[tiles.Tile]) -> None:
-        for sprite in group:
-            # because pygame.sprite.Sprite.rect is Optional for some reason
-            sprite.rect = cast(pygame.FRect, sprite.rect)
+    def collide(self, tile: tiles.Tile) -> Collision:
+        # because pygame.sprite.Sprite.rect is Optional for some reason
+        tile.rect = cast(pygame.FRect, tile.rect)
 
-            if not sprite.collideable:
-                continue
+        collision = Collision.NONE
 
-            # collide x
-            if sprite.rect.colliderect(
-                self.rect.x + self.movement.x,
-                self.rect.y,
-                self.rect.width,
-                self.rect.height,
-            ):
-                if self.movement.x > 0:
-                    self.movement.x = sprite.rect.left - self.rect.right
-                elif self.movement.x < 0:
-                    self.movement.x = sprite.rect.right - self.rect.left
-                self.vel.x = 0
-            # collide y
-            if sprite.rect.colliderect(
-                self.rect.x,
-                self.rect.y + self.movement.y,
-                self.rect.width,
-                self.rect.height,
-            ):
-                if self.movement.y < 0:
-                    self.movement.y = sprite.rect.bottom - self.rect.top
-                elif self.movement.y > 0:
-                    self.movement.y = sprite.rect.top - self.rect.bottom
-                self.vel.y = 0
+        # collide x
+        if tile.rect.colliderect(
+            self.rect.x + self.movement.x,
+            self.rect.y,
+            self.rect.width,
+            self.rect.height,
+        ):
+            if self.movement.x > 0:
+                self.movement.x = tile.rect.left - self.rect.right
+            elif self.movement.x < 0:
+                self.movement.x = tile.rect.right - self.rect.left
+            self.vel.x = 0
+
+            collision = Collision.NORMAL
+
+        # collide y
+        if tile.rect.colliderect(
+            self.rect.x,
+            self.rect.y + self.movement.y,
+            self.rect.width,
+            self.rect.height,
+        ):
+            if self.movement.y < 0:
+                self.movement.y = tile.rect.bottom - self.rect.top
+            elif self.movement.y > 0:
+                self.movement.y = tile.rect.top - self.rect.bottom
+            self.vel.y = 0
+            collision = Collision.NORMAL
+
+        if collision is not Collision.NONE and tile.does_damage:
+            collision = Collision.DAMAGE
+
+        return collision

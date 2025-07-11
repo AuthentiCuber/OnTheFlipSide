@@ -43,7 +43,18 @@ class Level1:
         self.tiles.draw(screen)
 
         self.player.update(dt)
-        self.player.collide(self.tiles)
+
+        for tile in self.tiles:
+            if not tile.collideable:
+                continue
+
+            result = self.player.collide(tile)
+
+            match result:
+                case player.Collision.DAMAGE:
+                    self.reset()
+                    break
+
         self.player.move()
         self.player.draw(screen)
 
@@ -59,6 +70,7 @@ class Level1:
             startpos.pos.x + half_grid_size,
             startpos.pos.y + half_grid_size,
         )
+        self.player.gravity.update(0, 1)
 
 
 if __name__ == "__main__":
