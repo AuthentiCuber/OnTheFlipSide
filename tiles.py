@@ -13,6 +13,7 @@ class Tile(pygame.sprite.Sprite):
         self.pos = pygame.Vector2(x, y)
         self.size = size
         self.collideable = True
+        self.does_damage = False
         self.image = pygame.Surface((self.size, self.size))
         self.image.fill(colour)
         self.rect = self.image.get_frect(topleft=self.pos)
@@ -26,6 +27,7 @@ class WallTile(Tile):
 class LavaTile(Tile):
     def __init__(self, x: float, y: float, size: float) -> None:
         super().__init__(x, y, size, (200, 50, 50))
+        self.does_damage = True
 
 
 class StartPos(Tile):
@@ -74,13 +76,13 @@ def tiles_to_level_data(
     return level_data
 
 
-def save_level(tile_list: pygame.sprite.Group[Tile]) -> None:
-    with open("level", "wb") as file:
+def save_level(tile_list: pygame.sprite.Group[Tile], filename: str) -> None:
+    with open(filename, "wb") as file:
         pickle.dump(tiles_to_level_data(tile_list), file)
 
 
-def load_level() -> pygame.sprite.Group[Tile]:
-    with open("level", "rb") as file:
+def load_level(filename: str) -> pygame.sprite.Group[Tile]:
+    with open(filename, "rb") as file:
         return level_data_to_tiles(pickle.load(file))
 
 

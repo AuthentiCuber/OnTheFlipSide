@@ -3,7 +3,7 @@ from typing import cast
 
 import pygame
 
-from tiles import Tile
+import tiles
 
 
 def expDecay(decay: float, dt: float) -> float:
@@ -49,7 +49,7 @@ class Player:
         if self.vel.length() > self.max_vel:
             self.vel.scale_to_length(self.max_vel)
 
-        self.movement.update(self.vel * dt)
+        self.movement = self.vel * dt
 
     def move(self) -> None:
         self.rect.x += self.movement.x
@@ -58,7 +58,7 @@ class Player:
     def draw(self, surface: pygame.Surface) -> None:
         surface.blit(self.image, self.rect)
 
-    def collide(self, group: pygame.sprite.Group[Tile]) -> None:
+    def collide(self, group: pygame.sprite.Group[tiles.Tile]) -> None:
         for sprite in group:
             # because pygame.sprite.Sprite.rect is Optional for some reason
             sprite.rect = cast(pygame.FRect, sprite.rect)

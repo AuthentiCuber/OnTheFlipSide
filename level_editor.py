@@ -28,9 +28,9 @@ class Game:
                 return
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_F1:
-                    tiles.save_level(self.level)
+                    tiles.save_level(self.level, "levels/level1")
                 elif event.key == pygame.K_F2:
-                    self.level = tiles.load_level()
+                    self.level = tiles.load_level("levels/level1")
 
         self.subscreen.fill((10, 200, 80))
         self.draw_grid()
@@ -68,6 +68,8 @@ class Game:
             self.current_tile_type = tiles.WallTile
         elif keys[pygame.K_2]:
             self.current_tile_type = tiles.LavaTile
+        elif keys[pygame.K_3]:
+            self.current_tile_type = tiles.StartPos
 
         mouse_buttons = pygame.mouse.get_pressed()
         lmb = mouse_buttons[0]

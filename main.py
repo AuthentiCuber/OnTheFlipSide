@@ -1,6 +1,6 @@
 import pygame
 
-import tiles
+import scenes
 from player import Player
 from settings import Settings
 
@@ -15,32 +15,20 @@ class Game:
         self.dt: float = 0
         self.clock = pygame.Clock()
         self.running = True
-        self.scene = self.level1
 
         self.player = Player()
-        self.tiles = tiles.load_level()
-
-    def level1(self, dt: float) -> None:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT or (
-                event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE
-            ):
-                self.running = False
-                return
-
-        self.subscreen.fill((150, 150, 150))
-
-        self.tiles.draw(self.subscreen)
-
-        self.player.update(dt)
-        self.player.collide(self.tiles)
-        self.player.move()
-        self.player.draw(self.subscreen)
+        self.scene: scenes.Scene = scenes.Level1(self.player)
 
     def loop(self) -> None:
         self.dt = self.clock.tick_busy_loop(self.settings.max_fps) / 1000
 
-        self.scene(self.dt)
+        result = self.scene.timestep(self.dt, self.subscreen)
+
+        match result:
+            case scenes.ReturnCode.EXIT:
+                self.running = False
+            case scenes.ReturnCode.RESET:
+                self.scene.reset()
 
         draw_resolution = pygame.Vector2()
         window_aspect_ratio = (
