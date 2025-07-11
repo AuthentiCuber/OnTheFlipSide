@@ -18,6 +18,15 @@ class Tile(pygame.sprite.Sprite):
         self.image.fill(colour)
         self.rect = self.image.get_frect(topleft=self.pos)
 
+    def __eq__(self, value: object) -> bool:
+        if not isinstance(value, type(self)):
+            return False
+
+        return self.pos == value.pos
+
+    def __hash__(self) -> int:
+        return hash((type(self), self.pos.x, self.pos.y))
+
 
 class WallTile(Tile):
     def __init__(self, x: float, y: float, size: float) -> None:

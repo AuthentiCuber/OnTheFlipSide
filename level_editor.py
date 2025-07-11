@@ -92,8 +92,9 @@ class Game:
         if lmb:
             self.level.add(tile)
         elif rmb:
-            if tile in self.level:
-                self.level.remove(tile)
+            for existing_tile in self.level:
+                if tile == existing_tile:
+                    self.level.remove(existing_tile)
 
     def loop(self) -> None:
         self.dt = self.clock.tick_busy_loop(self.settings.max_fps) / 1000
