@@ -1,7 +1,14 @@
+from enum import Enum, auto
+
 import pygame
 
 import tiles
 from settings import Settings
+
+
+class EditorMode(Enum):
+    DELETE = auto()
+    PLACE = auto()
 
 
 class Game:
@@ -19,6 +26,8 @@ class Game:
         self.level: pygame.sprite.Group[tiles.Tile] = pygame.sprite.Group()
         self.current_tile_type: type[tiles.Tile] = tiles.WallTile
 
+        self.mode = EditorMode.PLACE
+
     def scene(self, dt: float) -> None:
         for event in pygame.event.get():
             if event.type == pygame.QUIT or (
@@ -27,10 +36,17 @@ class Game:
                 self.running = False
                 return
             elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_F1:
-                    tiles.save_level(self.level, "levels/level1")
-                elif event.key == pygame.K_F2:
-                    self.level = tiles.load_level("levels/level1")
+                match event.key:
+                    case pygame.K_F1:
+                        tiles.save_level(self.level, "levels/level1")
+                    case pygame.K_F2:
+                        self.level = tiles.load_level("levels/level1")
+                    case pygame.K_DELETE:
+                        self.mode = (
+                            EditorMode.DELETE
+                            if self.mode == EditorMode.PLACE
+                            else EditorMode.PLACE
+                        )
 
         self.subscreen.fill((10, 200, 80))
         self.draw_grid()
@@ -76,13 +92,15 @@ class Game:
         rmb = mouse_buttons[2]
         if not (lmb or rmb):
             return
-        # position within subscreen
-        mouse_pos = pygame.Vector2(pygame.mouse.get_pos()).elementwise() * (
-            pygame.Vector2(self.subscreen.get_size()).elementwise()
-            / pygame.Vector2(self.screen.get_size())
+
+        mouse_pos = pygame.mouse.get_pos()
+
+        mouse_pos_in_window = pygame.Vector2(
+            mouse_pos[0] * self.subscreen.width / self.screen.width,
+            mouse_pos[1] * self.subscreen.height / self.screen.height,
         )
-        cell_x = mouse_pos.x // self.grid_cell_size
-        cell_y = mouse_pos.y // self.grid_cell_size
+        cell_x = mouse_pos_in_window.x // self.grid_cell_size
+        cell_y = mouse_pos_in_window.y // self.grid_cell_size
         actual_x = cell_x * self.grid_cell_size
         actual_y = cell_y * self.grid_cell_size
 
@@ -90,11 +108,15 @@ class Game:
             self.current_tile_type, actual_x, actual_y, self.grid_cell_size
         )
         if lmb:
-            self.level.add(tile)
-        elif rmb:
-            for existing_tile in self.level:
-                if tile == existing_tile:
-                    self.level.remove(existing_tile)
+            match self.mode:
+                case EditorMode.PLACE:
+                    self.level.add(tile)
+                case EditorMode.DELETE:
+                    for existing_tile in self.level:
+                        if existing_tile.pos == pygame.Vector2(
+                            actual_x, actual_y
+                        ):
+                            self.level.remove(existing_tile)
 
     def loop(self) -> None:
         self.dt = self.clock.tick_busy_loop(self.settings.max_fps) / 1000
