@@ -5,6 +5,7 @@ import pygame
 
 import player
 import tiles
+import Vector2
 
 
 class ReturnCode(Enum):
@@ -73,8 +74,9 @@ class Level1:
             startpos.pos.x + half_grid_size,
             startpos.pos.y + half_grid_size,
         )
-        self.player.gravity = pygame.Vector2(0, 1)
-        self.player.vel = pygame.Vector2(0, 0)
+        self.player.gravity = Vector2.DOWN
+        self.player.vel = Vector2.ZERO
+        self.player.movement = Vector2.ZERO
 
 
 if __name__ == "__main__":

@@ -5,6 +5,7 @@ from typing import cast
 import pygame
 
 import tiles
+import Vector2
 
 
 def expDecay(decay: float, dt: float) -> float:
@@ -19,12 +20,12 @@ class Collision(Enum):
 
 class Player:
     def __init__(self) -> None:
-        self.movement = pygame.Vector2()
-        self.vel = pygame.Vector2()
+        self.movement = Vector2.ZERO
+        self.vel = Vector2.ZERO
         self.max_vel = 1000
-        self.gravity = pygame.Vector2(0, 1)
+        self.gravity = Vector2.DOWN
         self.gravity_strength = 3000
-        self.friction = 4
+        self.friction = 6
         self.image = pygame.Surface((60, 60))
         self.image.fill("dodgerblue4")
         self.rect = self.image.get_frect()
@@ -38,13 +39,13 @@ class Player:
         right = keys[pygame.K_RIGHT] or keys[pygame.K_d]
 
         if up:
-            self.gravity.update(0, -1)
+            self.gravity = Vector2.UP
         elif down:
-            self.gravity.update(0, 1)
+            self.gravity = Vector2.DOWN
         elif left:
-            self.gravity.update(-1, 0)
+            self.gravity = Vector2.LEFT
         elif right:
-            self.gravity.update(1, 0)
+            self.gravity = Vector2.RIGHT
 
         if self.gravity.x != 0:
             self.vel.y *= expDecay(self.friction, dt)
