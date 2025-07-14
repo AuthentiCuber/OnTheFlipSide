@@ -27,7 +27,7 @@ class Player:
         self.friction = 4
         self.image = pygame.Surface((60, 60))
         self.image.fill("dodgerblue4")
-        self.rect = self.image.get_frect(topleft=(240, 120))
+        self.rect = self.image.get_frect()
 
     def update(self, dt: float) -> None:
         keys = pygame.key.get_pressed()
@@ -53,7 +53,7 @@ class Player:
 
         self.vel += self.gravity * self.gravity_strength * dt
         # cap speed
-        if self.vel.length() > self.max_vel:
+        if self.vel.magnitude() > self.max_vel:
             self.vel.scale_to_length(self.max_vel)
 
         self.movement = self.vel * dt

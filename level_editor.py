@@ -10,7 +10,7 @@ class Game:
         self.screen = self.settings.screen
         self.subscreen = pygame.Surface((1920, 1080))
         self.clock = pygame.Clock()
-        self.dt: float = 0
+        self.dt = 0.0
         self.running = True
 
         self.grid_cell_size = 120

@@ -52,8 +52,7 @@ class Level1:
 
             match result:
                 case player.Collision.DAMAGE:
-                    self.reset()
-                    break
+                    return ReturnCode.RESET
 
         self.player.move()
         self.player.draw(screen)
@@ -74,7 +73,7 @@ class Level1:
             startpos.pos.x + half_grid_size,
             startpos.pos.y + half_grid_size,
         )
-        self.player.gravity.update(0, 1)
+        self.player.gravity = pygame.Vector2(0, 1)
         self.player.vel = pygame.Vector2(0, 0)
 
 

@@ -12,7 +12,7 @@ class Game:
         )
         self.screen = self.settings.screen
         self.subscreen = pygame.Surface((1920, 1080))
-        self.dt: float = 0
+        self.dt = 0.0
         self.clock = pygame.Clock()
         self.running = True
 
@@ -27,6 +27,7 @@ class Game:
         match result:
             case scenes.ReturnCode.EXIT:
                 self.running = False
+                return
             case scenes.ReturnCode.RESET:
                 self.scene.reset()
 
