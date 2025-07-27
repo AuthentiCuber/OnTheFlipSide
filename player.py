@@ -20,10 +20,10 @@ class Collision(Enum):
 
 class Player:
     def __init__(self) -> None:
-        self.movement = Vector2.ZERO
-        self.vel = Vector2.ZERO
+        self.movement = Vector2.ZERO()
+        self.vel = Vector2.ZERO()
         self.max_vel = 1000
-        self.gravity = Vector2.DOWN
+        self.gravity = Vector2.DOWN()
         self.gravity_strength = 3000
         self.friction = 6
         self.image = pygame.Surface((60, 60))
@@ -39,13 +39,13 @@ class Player:
         right = keys[pygame.K_RIGHT] or keys[pygame.K_d]
 
         if up:
-            self.gravity = Vector2.UP
+            self.gravity = Vector2.UP()
         elif down:
-            self.gravity = Vector2.DOWN
+            self.gravity = Vector2.DOWN()
         elif left:
-            self.gravity = Vector2.LEFT
+            self.gravity = Vector2.LEFT()
         elif right:
-            self.gravity = Vector2.RIGHT
+            self.gravity = Vector2.RIGHT()
 
         if self.gravity.x != 0:
             self.vel.y *= expDecay(self.friction, dt)
