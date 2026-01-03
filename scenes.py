@@ -5,12 +5,14 @@ import pygame
 
 import player
 import tiles
+import Vector2
 
 
 class ReturnCode(Enum):
     CONTINUE = auto()
     EXIT = auto()
     RESET = auto()
+    NEXT = auto()
 
 
 class Scene(Protocol):
@@ -53,6 +55,8 @@ class Level1:
             match result:
                 case player.Collision.DAMAGE:
                     return ReturnCode.RESET
+                case player.Collision.FINISH:
+                    ...
 
         self.player.move()
         self.player.draw(screen)
@@ -73,12 +77,9 @@ class Level1:
             startpos.pos.x + half_grid_size,
             startpos.pos.y + half_grid_size,
         )
-        # self.player.gravity = Vector2.DOWN
-        self.player.gravity.update(0, 1)
-        # self.player.vel = Vector2.ZERO
-        self.player.vel.update(0, 0)
-        # self.player.movement = Vector2.ZERO
-        self.player.movement.update(0, 0)
+        self.player.gravity = Vector2.DOWN()
+        self.player.vel = Vector2.ZERO()
+        self.player.movement = Vector2.ZERO()
 
 
 if __name__ == "__main__":

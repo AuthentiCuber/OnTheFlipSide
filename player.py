@@ -15,6 +15,7 @@ def expDecay(decay: float, dt: float) -> float:
 class Collision(Enum):
     DAMAGE = auto()
     NORMAL = auto()
+    FINISH = auto()
     NONE = auto()
 
 
@@ -103,5 +104,8 @@ class Player:
 
         if collision is not Collision.NONE and tile.does_damage:
             collision = Collision.DAMAGE
+
+        if isinstance(tile, tiles.FinishTile):
+            collision = Collision.FINISH
 
         return collision

@@ -45,6 +45,11 @@ class StartPos(Tile):
         self.collideable = False
 
 
+class FinishTile(Tile):
+    def __init__(self, x: float, y: float, size: float) -> None:
+        super().__init__(x, y, size, (0, 0, 0))
+
+
 tiles = tuple(Tile.__subclasses__())
 
 

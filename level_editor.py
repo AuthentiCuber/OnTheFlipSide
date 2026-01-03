@@ -86,6 +86,8 @@ class Game:
             self.current_tile_type = tiles.LavaTile
         elif keys[pygame.K_3]:
             self.current_tile_type = tiles.StartPos
+        elif keys[pygame.K_4]:
+            self.current_tile_type = tiles.FinishTile
 
         mouse_buttons = pygame.mouse.get_pressed()
         lmb = mouse_buttons[0]
