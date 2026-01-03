@@ -112,13 +112,23 @@ class Game:
         if lmb:
             match self.mode:
                 case EditorMode.PLACE:
-                    self.level.add(tile)
+                    # check there is not already a tile here
+                    occupied = False
+                    for existing_tile in self.level:
+                        if existing_tile.pos == pygame.Vector2(
+                            actual_x, actual_y
+                        ):
+                            occupied = True
+                            break
+                    if not occupied:
+                        self.level.add(tile)
                 case EditorMode.DELETE:
                     for existing_tile in self.level:
                         if existing_tile.pos == pygame.Vector2(
                             actual_x, actual_y
                         ):
                             self.level.remove(existing_tile)
+                            break
 
     def loop(self) -> None:
         self.dt = self.clock.tick_busy_loop(self.settings.max_fps) / 1000
