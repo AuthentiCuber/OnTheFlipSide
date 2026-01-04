@@ -31,14 +31,13 @@ class Game:
             case scenes.ReturnCode.RESET:
                 self.scene.reset()
 
+        # preserve 16:9 subscreen aspect ratio
+        # while scaling to as big as will fit
         draw_resolution = pygame.Vector2()
         window_aspect_ratio = (
             self.settings.resolution[0] / self.settings.resolution[1]
         )
-        subscreen_aspect_ratio = (
-            self.subscreen.get_size()[0] / self.subscreen.get_size()[1]
-        )
-        if subscreen_aspect_ratio > window_aspect_ratio:
+        if window_aspect_ratio < 16 / 9:
             draw_resolution.update(
                 self.settings.resolution[0],
                 self.settings.resolution[0] * (9 / 16),
@@ -49,8 +48,12 @@ class Game:
                 self.settings.resolution[1],
             )
 
+        scaled_subscreen = pygame.transform.scale(
+            self.subscreen, draw_resolution
+        )
+        # then draw scaled subscreen centered
         self.screen.blit(
-            pygame.transform.scale(self.subscreen, draw_resolution),
+            scaled_subscreen,
             (
                 (self.settings.resolution[0] - draw_resolution.x) / 2,
                 (self.settings.resolution[1] - draw_resolution.y) / 2,

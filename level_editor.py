@@ -30,23 +30,25 @@ class Game:
 
     def scene(self, dt: float) -> None:
         for event in pygame.event.get():
-            if event.type == pygame.QUIT or (
-                event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE
-            ):
-                self.running = False
-                return
-            elif event.type == pygame.KEYDOWN:
-                match event.key:
-                    case pygame.K_F1:
-                        tiles.save_level(self.level, "levels/level1")
-                    case pygame.K_F2:
-                        self.level = tiles.load_level("levels/level1")
-                    case pygame.K_DELETE:
-                        self.mode = (
-                            EditorMode.DELETE
-                            if self.mode == EditorMode.PLACE
-                            else EditorMode.PLACE
-                        )
+            match event:
+                case (
+                    pygame.Event(type=pygame.QUIT)
+                    | pygame.Event(type=pygame.KEYDOWN, key=pygame.K_ESCAPE)
+                ):
+                    self.running = False
+                    return
+                case pygame.Event(type=pygame.KEYDOWN, key=k):
+                    match k:
+                        case pygame.K_F1:
+                            tiles.save_level(self.level, "levels/level1")
+                        case pygame.K_F2:
+                            self.level = tiles.load_level("levels/level1")
+                        case pygame.K_DELETE:
+                            self.mode = (
+                                EditorMode.DELETE
+                                if self.mode == EditorMode.PLACE
+                                else EditorMode.PLACE
+                            )
 
         self.subscreen.fill((10, 200, 80))
         self.draw_grid()
@@ -54,25 +56,31 @@ class Game:
         self.draw_tiles()
 
     def draw_grid(self) -> None:
+        # vertical lines
         for x in range(self.grid_dimensions[0]):
-            pygame.draw.line(
-                self.subscreen,
-                "black",
-                (x * self.grid_cell_size, 0),
-                (
-                    x * self.grid_cell_size,
-                    self.grid_cell_size * (self.grid_dimensions[1] - 1),
-                ),
+            top = (x * self.grid_cell_size, 0)
+            bottom = (
+                x * self.grid_cell_size,
+                self.grid_cell_size * (self.grid_dimensions[1] - 1),
             )
-        for y in range(self.grid_dimensions[1]):
             pygame.draw.line(
                 self.subscreen,
                 "black",
-                (0, y * self.grid_cell_size),
-                (
-                    self.grid_cell_size * (self.grid_dimensions[0] - 1),
-                    y * self.grid_cell_size,
-                ),
+                top,
+                bottom,
+            )
+        # horizontal lines
+        for y in range(self.grid_dimensions[1]):
+            left = (0, y * self.grid_cell_size)
+            right = (
+                self.grid_cell_size * (self.grid_dimensions[0] - 1),
+                y * self.grid_cell_size,
+            )
+            pygame.draw.line(
+                self.subscreen,
+                "black",
+                left,
+                right,
             )
 
     def draw_tiles(self) -> None:

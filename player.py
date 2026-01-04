@@ -55,8 +55,7 @@ class Player:
 
         self.vel += self.gravity * self.gravity_strength * dt
         # cap speed
-        if self.vel.magnitude() > self.max_vel:
-            self.vel.scale_to_length(self.max_vel)
+        self.vel.clamp_magnitude_ip(self.max_vel)
 
         self.movement = self.vel * dt
 

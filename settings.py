@@ -80,7 +80,7 @@ class Settings:
         """Update the pygame.display mode"""
         display_flags = 0
         if self._fullscreen:
-            display_flags = pygame.FULLSCREEN
+            display_flags |= pygame.FULLSCREEN
 
         self.screen = pygame.display.set_mode(
             self._resolution, display_flags, display=self._monitor

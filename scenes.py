@@ -35,10 +35,12 @@ class Level1:
 
     def timestep(self, dt: float, screen: pygame.Surface) -> ReturnCode:
         for event in pygame.event.get():
-            if event.type == pygame.QUIT or (
-                event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE
-            ):
-                return ReturnCode.EXIT
+            match event:
+                case (
+                    pygame.Event(type=pygame.QUIT)
+                    | pygame.Event(type=pygame.KEYDOWN, key=pygame.K_ESCAPE)
+                ):
+                    return ReturnCode.EXIT
 
         screen.fill((150, 150, 150))
 
